@@ -32,6 +32,22 @@ jumpCount = 10
 right = False
 left = False
 animCount = 0
+lastMove = "right"
+
+
+class Shell:
+    """ Class required for drawing the shell"""
+
+    def __init__(self, x, y, radius, color, direction):
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.color = color
+        self.direction = direction
+        self.vel = 8 * direction
+
+    def draw(self, win):
+        pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
 
 
 def drawWindow():
@@ -50,10 +66,15 @@ def drawWindow():
         animCount += 1
     else:  # Displaying a standing player
         win.blit(playerStand, (x, y))
+
+    for bullet in bullets:
+        bullet.draw(win)
+
     pygame.display.update()  # To change the image on screen we need to update it
 
 
 run = True
+bullets = []
 while run:
     clock.tick(30)  # Setting the game a fixed 30 FPS
 
@@ -62,19 +83,39 @@ while run:
         if event.type == pygame.QUIT:
             run = False
 
+    # Move and remove the shell if it is out of sight
+    for bullet in bullets:
+        if 500 > bullet.x > 0:
+            bullet.x += bullet.vel
+        else:
+            bullets.pop(bullets.index(bullet))
+
     '''Movement of the cube on surface
        In order to ger a pressed button we create an array of pressed buttons
        Then check it for buttons and move the cube accordingly
        Conditions AND we need for the borders of the screen so that player doesn't go beyond screen '''
+
     keys = pygame.key.get_pressed()
+
+    # Creating and drawing a shell by pressing F button
+    if keys[pygame.K_f]:
+        if lastMove == "right":
+            direction = 1
+        else:
+            direction = -1
+        if len(bullets) < 5:  # The screen should not contain more than 5 shells
+            bullets.append(Shell(round(x + width // 2), round(y + height // 2), 5, (255, 0, 0), direction))
+
     if keys[pygame.K_LEFT] and x > 0:
         x -= speed
         left = True
         right = False
+        lastMove = "left"
     elif keys[pygame.K_RIGHT] and x < 500 - width:
         x += speed
         left = False
         right = True
+        lastMove = "right"
     else:
         left = False
         right = False
