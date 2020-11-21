@@ -36,4 +36,4 @@ while run:
     pygame.draw.rect(win, (0, 255, 0), (x, y, width, height))  # Creating player
     pygame.display.update()  # To change the image on screen we need to update it
 
-pygame.quit()  # We turn off program you can only get here if that eternal cycle ends 
+pygame.quit()  # We turn off program you can only get here if that eternal cycle ends
